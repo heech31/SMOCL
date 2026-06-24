@@ -6,7 +6,7 @@ interpretation.
 
 #### Reference:
 
-Chung, H.C., An, S., Cha, H., & Ahn, J. Monotone Clusters With Ordinal
+Chung, H. C., An, S., Cha, H., & Ahn, J. Monotone Clusters with Ordinal
 Interpretation. *Statistical Analysis and Data Mining* (to appear)
 
 ## To run
