@@ -6,7 +6,14 @@
 \alias{SMOCL-package}
 \title{SMOCL: Sparse Monotone Clustering with Ordinal Interpretation}
 \description{
-Implements sparse monotone clustering for identifying ordinally interpretable clusters and selecting variables with monotone associations with the cluster ordering.
+Implements sparse monotone clustering for identifying ordinally
+interpretable clusters and selecting variables with monotone
+associations with the cluster ordering.
+}
+\details{
+The package includes cooperative-Lasso source code derived from
+the scoop package version 0.2-1 by Julien Chiquet, distributed
+under GPL (>= 2).
 }
 \author{
 \strong{Maintainer}: Seongbin An \email{lasb0305@gmail.com}

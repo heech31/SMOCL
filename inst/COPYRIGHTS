@@ -1,0 +1,34 @@
+Bundled source code from the scoop package
+===========================================
+
+The SMOCL package incorporates source code derived from:
+
+  Package: scoop
+  Version: 0.2-1
+  Author: Julien Chiquet
+  License: GPL (>= 2)
+  Original package URL:
+  http://stat.genopole.cnrs.fr/logiciels/scoop
+
+The source package used for this integration was obtained from:
+
+  http://www.math-evry.cnrs.fr/logiciels/scoop
+
+The bundled source implements the cooperative-Lasso optimization
+used by SMOCL.
+
+Files copied unchanged from scoop 0.2-1:
+
+  R/vendor-scoop-cvscoop-class.R
+  R/vendor-scoop-optim_bfgs.R
+  R/vendor-scoop-optim_proximal.R
+  R/vendor-scoop-scoop-model.R
+  R/vendor-scoop-scoop.R
+  R/vendor-scoop-scoopfit-class.R
+  R/vendor-scoop-tree-solver.R
+  R/vendor-scoop-working-set.R
+  src/scoop.c
+  src/scoop_utils.h
+
+The original source code is distributed under GPL (>= 2).
+SMOCL is likewise distributed under GPL (>= 2).
