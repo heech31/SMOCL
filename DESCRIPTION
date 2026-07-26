@@ -1,0 +1,18 @@
+Package: SMOCL
+Title: Sparse Monotone Clustering with Ordinal Interpretation
+Version: 0.0.0.9000
+Authors@R: c(
+    person("Hee Cheol", "Chung", role = "aut"),
+    person("Seongbin", "An", , "lasb0305@gmail.com", role = c("aut", "cre")),
+    person("Hyunwoo", "Cha", role = "aut"),
+    person("Jeongyoun", "Ahn", role = "aut"),
+    person("Julien", "Chiquet", role = "ctb",
+           comment = "Author of bundled source code derived from scoop 0.2-1")
+  )
+Description: Implements sparse monotone clustering for identifying
+    ordinally interpretable clusters and selecting variables with monotone
+    associations with the cluster ordering.
+License: GPL (>= 2)
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 8.0.0
