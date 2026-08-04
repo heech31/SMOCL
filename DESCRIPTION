@@ -23,4 +23,5 @@ Imports:
     graphics,
     MASS,
     methods,
+    splines2,
     stats
