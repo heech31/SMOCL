@@ -26,3 +26,5 @@ Imports:
     methods,
     splines2,
     stats
+Depends: 
+    R (>= 3.5.0)
