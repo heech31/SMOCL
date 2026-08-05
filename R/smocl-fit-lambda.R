@@ -90,15 +90,16 @@ MOCL_scale <- function(Xf, K, max.iter = 500, degree = degree, df = 3, lambda = 
     ucf_count <- 0
     
     while( length(km_new)==1 & ucf_count < 50){# When empty cluster occurs
-      km_new <- KMeans_rcpp(y_hat, clusters = K, CENTROIDS = matrix(ini_centers, ncol=1), seed = sample(1e4,1) )
+      km_new <- ClusterR::KMeans_rcpp(y_hat, clusters = K, CENTROIDS = matrix(ini_centers, ncol=1), seed = sample(1e4,1) )
       km_new$centers <- km_new$centroids
       ucf_count <- ucf_count + 1
     }
     
-    if( ucf_count == 50){
-      message("ucf_count > 50: check UCF (K-means) step in MOCL_scale.R")
-      kmeans(y_hat_perturbed, centers=c(ini_centers), iter.max=500) # to print error message
-      break;
+    if (ucf_count >= 50 && length(km_new) == 1) {
+      stop(
+        "The UCF step failed to obtain a valid K-means solution after 50 attempts.",
+        call. = FALSE
+      )
     }
     
     o_c <- km_new$cluster # cluster assignments

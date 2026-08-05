@@ -208,7 +208,7 @@ initialize_mocl <- function(data, K){
   PC1 <- -(xc %*% svd(xc)$v[,1])[,,drop=TRUE]
   PC1 <- PC1 / norm2( PC1 )
   
-  km_PC1 <- kmeans(as.matrix(PC1), center = K, nstart = 100, iter.max = 100 )
+  km_PC1 <- kmeans(as.matrix(PC1), centers = K, nstart = 100, iter.max = 100 )
   
   yhat_init <-  PC1 # initial estimated cluster score (continuous)
   yhat_init <-  yhat_init
