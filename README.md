@@ -1,72 +1,173 @@
-Sparse Monotone Clusters With Ordinal Interpretation (SMOCL)
-================
+# SMOCL: Sparse Monotone Clustering with Ordinal Interpretation
 
-R codes to implement Sparse MOnotone CLusters (SMOCL) with ordinal
-interpretation.
+`SMOCL` provides an R implementation of Sparse MOnotone CLustering
+with ordinal interpretation. The method estimates ordered clusters,
+monotone variable transformations, and a sparse set of variables
+associated with the cluster ordering.
 
-#### Reference:
+## Installation
 
-Chung, H. C., An, S., Cha, H., & Ahn, J. Monotone Clusters with Ordinal
-Interpretation. *Statistical Analysis and Data Mining* (to appear)
+The current package-development branch can be installed from GitHub
+using `remotes`.
 
-## To run
+```r
+# install.packages("remotes")
 
-To implement, (1) clone this repository; (2) open `SMOCL.Rproj`; (3)
-load packages and function located in the folder `./Functions/` as
-follows
-
-## Simple example
-
-This example uses Baseball data.
-
-#### Load data
-
-``` r
-# Load data
-mlb_data <- readRDS("./data/baseball.rds")
-mlb_x <- mlb_data$x
+remotes::install_github(
+  "Mos-start2092/SMOCL",
+  ref = "package-dev-scoop"
+)
 ```
 
-#### Fit SMOCL with $`K=4`$.
+The cooperative-lasso implementation required by SMOCL is included in
+the package. The archived `scoop` package does not need to be installed
+separately.
 
-``` r
-K <- 4
-lambda_seq <- seq.default(from=0.1,to=1,length=30)
-mocl <- MOCL_wcss_scale(Xf = mlb_x, K = K, lambda_seq = lambda_seq, df=5, tol = 1e-10)
+## Quick start
+
+
+the package. The archived `scoop` package does not need to be installed
+Load the package and the Baseball data included with SMOCL.
+
+```r
+library(SMOCL)
+
+baseball_path <- system.file(
+  "extdata",
+  "baseball.rds",
+  package = "SMOCL"
+)
+
+baseball <- readRDS(baseball_path)
+mlb_x <- baseball$x
 ```
 
-#### Cluster visualizaion using $`t`$-SNE.
+Fit SMOCL with four clusters and three candidate penalty parameters.
 
-``` r
+```r
+set.seed(20260726)
+
+fit <- smocl(
+  x = mlb_x,
+  k = 4,
+  lambda = c(0.1, 0.5, 1),
+  max_iter = 100,
+  n_basis = 5,
+  degree = 2,
+  tol = 1e-6
+)
+
+fit
+```
+
+The fitted object contains the ordered cluster assignments, estimated
+monotone functions, cooperative-lasso coefficients, selected penalty
+parameter, and tuning paths.
+
+```r
+fit$cluster
+fit$lam_wcss
+fit$coef
+fit$fx
+```
+
+Variables with nonzero estimated monotone functions can be identified
+as follows.
+
+```r
+selected <- colSums(abs(fit$fx)) > 0
+
+colnames(mlb_x)[selected]
+```
+
+## Cluster visualization
+
+The following optional example visualizes the fitted clusters using
+t-SNE. It requires the `Rtsne` package.
+
+```r
+# install.packages("Rtsne")
+
 set.seed(252)
-tsne  <- Rtsne(mlb_x, dim=2,  perplexity=30, max_iter = 500)
-plot(tsne$Y[,1],tsne$Y[,2], col = 0, xlab = "Y1", ylab="Y2" )
-text(tsne$Y[,1],tsne$Y[,2], labels=mocl$cluster, col = mocl$cluster, cex=1.2 )
+
+tsne <- Rtsne::Rtsne(
+  mlb_x,
+  dims = 2,
+  perplexity = 30,
+  max_iter = 500
+)
+
+plot(
+  tsne$Y[, 1],
+  tsne$Y[, 2],
+  type = "n",
+  xlab = "Y1",
+  ylab = "Y2"
+)
+
+text(
+  tsne$Y[, 1],
+  tsne$Y[, 2],
+  labels = fit$cluster,
+  col = fit$cluster,
+  cex = 1.2
+)
 ```
 
-![](README_files/figure-gfm/tsne-1.png)<!-- -->
+![](README_files/figure-gfm/tsne-1.png)
 
-#### Estimated monotone functions
+## Estimated monotone functions
 
-``` r
-group <-  mocl$cluster
-fx <- mocl$fx
-ylims <- c(-0.15,0.1)
+The estimated monotone functions for the selected variables can be
+displayed using base R graphics.
 
-sindx <- which( colSums(abs(fx)) != 0 )
-dat <- mlb_x
-var_names <- colnames(mlb_x)
+```r
+group <- fit$cluster
+fx <- fit$fx
+selected_index <- which(colSums(abs(fx)) > 0)
+variable_names <- colnames(mlb_x)
 
-par(mfrow=c(1,3))
-for( jj in sindx){
-  maintitle <- bquote(paste("Baseball: ", hat(m)[.( var_names[jj] )] )  )
-  means <- group_means( xs = dat[,jj], ys = fx[,jj], group = group)
-  plot(dat[,jj], fx[,jj], col = group, main = maintitle, 
-       pch=group, cex=0.8, ylim = ylims, xlab = "", ylab = ""
-  )
-  title(xlab = var_names[jj], line = 2)
-  points( means[,1], means[,2], col = 1:max(group), pch=20, cex=3)
+if (length(selected_index) > 0L) {
+  old_par <- par(no.readonly = TRUE)
+  par(mfrow = c(1, length(selected_index)))
+
+  for (j in selected_index) {
+    mean_x <- tapply(mlb_x[, j], group, mean)
+    mean_fx <- tapply(fx[, j], group, mean)
+
+    plot(
+      mlb_x[, j],
+      fx[, j],
+      col = group,
+      pch = group,
+      cex = 0.8,
+      xlab = variable_names[j],
+      ylab = "Estimated monotone function",
+      main = variable_names[j]
+    )
+
+    points(
+      mean_x,
+      mean_fx,
+      pch = 20,
+      cex = 2
+    )
+  }
+
+  par(old_par)
 }
 ```
 
-![](README_files/figure-gfm/functions-1.png)<!-- -->
+![](README_files/figure-gfm/functions-1.png)
+
+## Legacy research scripts
+
+The original research functions are retained in the `Functions/`
+directory for reproducibility. New analyses should ordinarily use the
+exported `smocl()` interface.
+
+## Reference
+
+Chung, H. C., An, S., Cha, H., and Ahn, J.  
+“Monotone Clusters with Ordinal Interpretation.”  
+*Statistical Analysis and Data Mining* (to appear).
