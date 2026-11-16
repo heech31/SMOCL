@@ -1,3 +1,11 @@
+
+⚠️ Notice: This repository contains an early version of SMOCL.
+
+For the latest version and updates, please visit the following repository:
+
+https://github.com/Mos-start2092/SMOCL
+
+
 Sparse Monotone Clusters With Ordinal Interpretation (SMOCL)
 ================
 
